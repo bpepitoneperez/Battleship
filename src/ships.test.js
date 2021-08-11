@@ -10,7 +10,7 @@ test('creates basic ship', () => {
 test('can hit ship position', () => {
     const ship = Ship('battleship', 4);
     ship.hit(0);
-    expect(ship.position[0]).toBe(true);
+    expect(ship.position[0].hit).toBe(true);
 });
 
 test('sink ship check', () => {

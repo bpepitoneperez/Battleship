@@ -3,17 +3,20 @@ const Ship = (title, length) => {
     let position = [];
 
     for (let i = 0; i < length; i++) {
-        position[i] = false;
+        position[i] = {
+            hit: false,
+            pos: i,
+        };
     }
 
     function hit (pos) {
-        position[pos] = true;
+        position[pos].hit = true;
         this.hits++;
     };
 
     function isSunk () {
         for (let i = 0; i < length; i++) {
-            if (position[i] == false) {
+            if (position[i].hit == false) {
                 return false;
             }
         }
