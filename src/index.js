@@ -1,10 +1,6 @@
 import './style.css';
+import { createGameRandom } from './gameloop';
+import {createLayout} from './DOMDisplay';
 
-
-const body = document.body;
-
-const headerDiv = document.createElement('div');
-headerDiv.id = 'header-div';
-headerDiv.textContent = 'Battleship';
-
-body.appendChild(headerDiv);
+createLayout();
+createGameRandom();

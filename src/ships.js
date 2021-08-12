@@ -5,6 +5,8 @@ const Ship = (title, length) => {
     for (let i = 0; i < length; i++) {
         position[i] = {
             hit: false,
+            boardR: null,
+            boardC: null,
             pos: i,
         };
     }
