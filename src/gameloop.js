@@ -21,9 +21,7 @@ function createGameRandom () {
     player2.myBoard.placeShip(Ship('boat1-2', 2), 0, 0, true);
     player2.myBoard.placeShip(Ship('boat2-2', 2), 1, 1, true);
     player2.myBoard.placeShip(Ship('boat3-2', 2), 2, 2, true);
-
-    console.log(player1.opponentBoard);
-    console.log(player2.opponentBoard);
+    
     game = true;
 }
 
@@ -50,7 +48,6 @@ function attack (player, r, c) {
         player1Turn = !player1Turn;
     }
     else {
-        console.log('Invalid');
     }
 }
 
