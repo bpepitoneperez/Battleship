@@ -1,6 +1,7 @@
 const Ship = (title, length) => {
     let hits = 0;
     let position = [];
+    let sunk = false;
 
     for (let i = 0; i < length; i++) {
         position[i] = {
@@ -22,6 +23,7 @@ const Ship = (title, length) => {
                 return false;
             }
         }
+        sunk = true;
         return true;
     }
 
@@ -31,7 +33,8 @@ const Ship = (title, length) => {
         hit,
         hits,
         position,
-        isSunk
+        isSunk,
+        sunk,
     }
 }
 

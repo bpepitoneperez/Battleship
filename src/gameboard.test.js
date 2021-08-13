@@ -15,18 +15,18 @@ test('place ship horizontal', () => {
     const ship1 = Ship('boat', 3);
     const board = Gameboard('board1', 10);
     board.placeShip(ship1, 1, 2, true);
-    expect(board.squares[1][2].shipPos.pos).toBe(0);
-    expect(board.squares[1][3].shipPos.pos).toBe(1);
-    expect(board.squares[1][4].shipPos.pos).toBe(2);
+    expect(board.squares[1][2].shipHere).toBe(true);
+    expect(board.squares[1][3].shipHere).toBe(true);
+    expect(board.squares[1][4].shipHere).toBe(true);
 });
 
 test('place ship vertical', () => {
     const ship1 = Ship('boat', 3);
     const board = Gameboard('board1', 10);
     board.placeShip(ship1, 1, 2, false);
-    expect(board.squares[1][2].shipPos.pos).toBe(0);
-    expect(board.squares[2][2].shipPos.pos).toBe(1);
-    expect(board.squares[3][2].shipPos.pos).toBe(2);
+    expect(board.squares[1][2].shipHere).toBe(true);
+    expect(board.squares[2][2].shipHere).toBe(true);
+    expect(board.squares[3][2].shipHere).toBe(true);
 });
 
 test('attack miss', () => {
@@ -51,10 +51,8 @@ test('boat sunk', () => {
     const ship2 = Ship('boat', 3);
     board.placeShip(ship1, 1, 2, true);
     board.placeShip(ship2, 0, 0, false);
-    expect(board.receiveAttack(1, 2)).toBe('Hit');
-    expect(board.squares[1][2].hit).toBe(true);
-    expect(board.receiveAttack(1, 3)).toBe('Hit');
-    expect(board.squares[1][3].hit).toBe(true);
+    board.receiveAttack(1, 2);
+    board.receiveAttack(1, 3);
     expect(board.squares[1][2].ship.isSunk()).toBe(true);
     expect(board.squares[1][3].ship.isSunk()).toBe(true);
 })

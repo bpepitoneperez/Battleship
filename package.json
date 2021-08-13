@@ -27,8 +27,10 @@
     "webpack-cli": "^4.7.2"
   },
   "jest": {
+    "testMatch": [
+      "**/?(*.)+(spec|test).js"
+    ],
     "modulePaths": ["/shared/vendor/modules"],
-    "moduleFileExtensions": ["js", "jsx"],
     "moduleDirectories": ["node_modules", "bower_components", "shared"],
 
     "moduleNameMapper": {

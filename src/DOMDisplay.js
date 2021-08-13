@@ -1,10 +1,15 @@
 import {player1Turn, player1, player2, attack, game} from './gameloop';
+import { Ship } from './ships';
 
 const body = document.body;
+let activeShip = 4;
 
 function createLayout () {
     displayHeader();
+    createSetupArea();
     createHTML();
+    createGameSetup();
+    shipPrompt();
 }
 
 function displayHeader () {
@@ -13,6 +18,12 @@ function displayHeader () {
     headerDiv.textContent = 'Battleship';
 
     body.appendChild(headerDiv);
+}
+
+function createSetupArea () {
+    const setupArea = document.createElement('div');
+    setupArea.id = 'setup-area';
+    body.appendChild(setupArea);
 }
 
 function createHTML () {
@@ -47,9 +58,23 @@ function createEmptyBoards () {
             let col = document.createElement('div');
             col.setAttribute('class', 'squares');
             col.id = ('board1-' + r + c);
-            col.addEventListener('click', () => {
-                if (player1Turn && game) {
-                    clickEvent(r, c);
+            col.addEventListener('mouseenter', () => {
+                if (!game) {
+                    hoverPlace(r, c);
+                }
+            });
+            col.addEventListener('mouseleave', () => {
+                if (!game) {
+                    hoverRemove(r, c);
+                }
+            });
+            col.addEventListener('click', (event) => {
+                console.log(event);
+                if (!player1Turn && game) {
+                    clickAttack(r, c);
+                }
+                if(!game) {
+                    clickPlace(r, c);
                 }
             });
             row.appendChild(col);
@@ -70,8 +95,8 @@ function createEmptyBoards () {
             col.setAttribute('class', 'squares');
             col.id = ('board2-' + r + c);
             col.addEventListener('click', () => {
-                if (!player1Turn && game) {
-                    clickEvent(r, c);
+                if (player1Turn && game) {
+                    clickAttack(r, c);
                 }
             });
             row.appendChild(col);
@@ -80,7 +105,104 @@ function createEmptyBoards () {
     }
 }
 
-function clickEvent (r, c) {
+function createGameSetup () {
+    const area = document.getElementById('setup-area');
+    const startDiv = document.createElement('div');
+    startDiv.textContent = 'start game';
+    startDiv.addEventListener('click', () => {
+        game = true;
+        console.log(game);
+    });
+    area.appendChild(startDiv);
+
+    const shipDiv = document.createElement('div');
+    shipDiv.id = 'ship-div';
+    area.appendChild(shipDiv);
+}
+
+function shipPrompt () {
+    const div = document.getElementById('ship-div');
+    div.textContent = 'Place ship of length 4.';
+}
+
+function hoverPlace (r, c) {
+    let canPlace;
+    if (c + activeShip < 11) {
+        canPlace = true;
+        for (let i = 0; i < activeShip; i++) {
+            if (player1.myBoard.squares[r][c + i].ship) {
+                canPlace = false;
+            }
+        }
+        if (canPlace) {
+            for (let i = 0; i < activeShip; i++) {
+                let square = document.getElementById(('board1-' + r + (c + i)));
+                square.style.backgroundColor = 'cyan';
+            }
+        }
+        else {
+            if (!player1.myBoard.squares[r][c].ship) {
+                let square = document.getElementById(('board1-' + r + c));
+                square.style.backgroundColor = 'pink';
+            }
+        }
+    }
+    else {
+        if (!player1.myBoard.squares[r][c].ship) {
+            let square = document.getElementById(('board1-' + r + c));
+            square.style.backgroundColor = 'pink';
+        }
+    }
+}
+
+function hoverRemove (r, c) {
+    let canPlace = true;
+    if (c + activeShip < 11) {
+        for (let i = 0; i < activeShip; i++) {
+            if (player1.myBoard.squares[r][c + i].ship) {
+                canPlace = false;
+            }
+        }
+        if (canPlace) {
+            for (let i = 0; i < activeShip; i++) {
+                let square = document.getElementById(('board1-' + r + (c + i)));
+                square.style.backgroundColor = 'gainsboro';
+            }
+        }
+        else {
+            if (!player1.myBoard.squares[r][c].ship) {
+                let square = document.getElementById(('board1-' + r + c));
+                square.style.backgroundColor = 'gainsboro';
+            }
+        }
+    }
+    else {
+        if (!player1.myBoard.squares[r][c].ship) {
+            let square = document.getElementById(('board1-' + r + c));
+            square.style.backgroundColor = 'gainsboro';
+        }
+    }
+}
+
+function clickPlace (r, c) {
+    let canPlace = true;
+    if (c + activeShip < 11) {
+        for (let i = 0; i < activeShip; i++) {
+            if (player1.myBoard.squares[r][c + i].ship) {
+                canPlace = false;
+            }
+        }
+        if (canPlace) {
+            player1.myBoard.placeShip(Ship('boat1-1', activeShip), r, c, true);
+            for (let i = 0; i < activeShip; i++) {
+                let square = document.getElementById(('board1-' + r + (c + i)));
+                square.style.backgroundColor = 'blue';
+            }
+        }
+    }
+}
+
+function clickAttack (r, c) {
     if (player1Turn) {
         attack(player1, r, c)
     }
@@ -91,7 +213,7 @@ function clickEvent (r, c) {
 
 function hitUpdate (r, c) {
     let square;
-    if (player1Turn) {
+    if (!player1Turn) {
         square = document.getElementById('board1-' + r + c);
     }
     else {
@@ -102,7 +224,7 @@ function hitUpdate (r, c) {
 
 function missUpdate (r,c) {
     let square;
-    if (player1Turn) {
+    if (!player1Turn) {
         square = document.getElementById('board1-' + r + c);
     }
     else {
@@ -116,7 +238,7 @@ function shipDestroyed (ship) {
         let r = ship.position[i].boardR;
         let c = ship.position[i].boardC;
         let square;
-        if (player1Turn) {
+        if (!player1Turn) {
             square = document.getElementById('board1-' + r + c);
         }
         else {
