@@ -18,11 +18,10 @@ test('cpu found ship function', () => {
     let player2 = Player('Player 1', board2, board1, false);
     const ship1 = Ship('boat', 3);
     board1.placeShip(ship1, 1, 2, true);
-    while(!player2.shipFound) {
-        let coords = player2.cpuRandomAttack();
-        board1.receiveAttack(coords.r, coords.c);
+    while(!player2.cpuInfo.shipFound) {
+        player2.cpuRandomAttack();
     }
-    expect(player2.shipFound).toBe(true);
+    expect(player2.cpuInfo.shipFound).toBe(true);
 });
 
 test('cpu find and kill ship', () => {
@@ -32,7 +31,7 @@ test('cpu find and kill ship', () => {
     let player2 = Player('Player 1', board2, board1, false);
     const ship1 = Ship('boat', 3);
     board1.placeShip(ship1, 1, 2, true);
-    while(!player2.shipFound) {
+    while(!player2.cpuInfo.shipFound) {
         let coords = player2.cpuRandomAttack();
         board1.receiveAttack(coords.r, coords.c);
     }

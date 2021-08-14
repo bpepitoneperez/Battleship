@@ -14,7 +14,7 @@ const Ship = (title, length) => {
 
     function hit (pos) {
         position[pos].hit = true;
-        this.hits++;
+        hits++;
     };
 
     function isSunk () {

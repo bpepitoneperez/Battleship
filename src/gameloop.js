@@ -31,13 +31,12 @@ function gameSetup () {
 
 function attack (player, r, c) {
     if (!player.opponentBoard.squares[r][c].hit && game == true) {
-        console.log(player, r, c);
         let result = player.opponentBoard.receiveAttack(r, c);
-        console.log(result);
         if (result === 'Hit') {
-            console.log(player, 'hit')
+            console.log('hit')
             hitUpdate(r, c);
             if (player.opponentBoard.squares[r][c].ship.isSunk()) {
+                player.opponentBoard.squares[r][c].ship.sunk = true;
                 shipDestroyed(player.opponentBoard.squares[r][c].ship);
                 if (player.opponentBoard.allShipsSunk()) {
                     game = false;
@@ -46,21 +45,25 @@ function attack (player, r, c) {
             }
         }
         else {
-            console.log(player, 'miss')
+            console.log('miss')
             missUpdate(r, c);
             player1Turn = !player1Turn;
         }
     }
     if (!player1Turn) {
-        let coords = [];
-        console.log(player2);
-        if (player2.shipFound) {
+        let coords;
+        if (player2.cpuInfo.shipFound) {
             coords = player2.cpuFoundAttack();
         }
         else {
             coords = player2.cpuRandomAttack();
         }
-        attack(player2, coords[0], coords[1]);
+
+        if (!coords) {
+            //console.log('failsafe');
+            coords = player2.cpuRandomAttack();
+        }
+        setTimeout(() => {attack(player2, coords.r, coords.c);}, 800);
     }
 }
 

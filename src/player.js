@@ -1,131 +1,132 @@
 
 const Player = (title, myBoard, opponentBoard, human) => {
-    let shipFound = false;
-    let shipFoundR;
-    let shipFoundC;
-    let move = 0;
-    let lastHit = false;
-    let goRight = true;
-    let goLeft = true;
-    let goUp = true;
-    let goDown = true;
+    let cpuInfo = {
+        shipFound: false,
+        shipFoundR: 0,
+        shipFoundC: 0,
+        move: 0,
+        lastHit: false,
+        goRight: true,
+        goLeft: true,
+        goUp: true,
+        goDown: true,
+        coords: {
+            r: 0,
+            c: 0,
+        },
+    }
     function randomSpot () {
         return Math.floor(Math.random() * (10 - 0) + 0)
     }
 
     function cpuFoundAttack () {
-        let coords = {
-            r: 0,
-            c: 0,
-        };
-        if (this.opponentBoard.squares[this.shipFoundR][this.shipFoundC].ship.sunk) {
-            this.shipFound = false;
-            this.move = 0;
-            goRight = true;
-            goLeft = true;
-            goUp = true;
-            goDown = true;
+        if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC].ship.sunk) {
+            cpuInfo.shipFound = false;
+            cpuInfo.shipFoundR = 0;
+            cpuInfo.shipFoundC = 0;
+            cpuInfo.move = 0;
+            cpuInfo.lastHit = false;
+            cpuInfo.goRight = true;
+            cpuInfo.goLeft = true;
+            cpuInfo.goUp = true;
+            cpuInfo.goDown = true;
             cpuRandomAttack();
         }
         else {
-            if (!this.lastHit) {
-                this.move = 0;
+            if (!cpuInfo.lastHit) {
+                cpuInfo.move = 0;
             }
-            if (goRight && this.shipFoundC + this.move > 9) {
-                goRight = false;
+            if (cpuInfo.goRight && cpuInfo.shipFoundC + cpuInfo.move > 9) {
+                cpuInfo.goRight = false;
             }
-            else if(goLeft && this.shipFoundC + this.move < 0) {
-                goLeft = false;
+            else if(cpuInfo.goLeft && cpuInfo.shipFoundC + cpuInfo.move < 0) {
+                cpuInfo.goLeft = false;
             }
-            else if(goUp && shipFoundC + this.move < 0) {
-                goUp = false;
+            else if(cpuInfo.goUp && cpuInfo.shipFoundC + cpuInfo.move < 0) {
+                cpuInfo.goUp = false;
             }
-            else if(goDown && shipFoundC + this.move > 9) {
-                goDown = false;
+            else if(cpuInfo.goDown && cpuInfo.shipFoundC + cpuInfo.move > 9) {
+                cpuInfo.goDown = false;
             }
 
 
-            if (goRight) {
-                this.move++;
-                if (this.opponentBoard.squares[this.shipFoundR][this.shipFoundC + this.move].ship) {
-                    goUp = false;
-                    goDown = false;
-                    this.lastHit = true;
+            if (cpuInfo.goRight) {
+                cpuInfo.move++;
+                if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].ship) {
+                    cpuInfo.goUp = false;
+                    cpuInfo.goDown = false;
+                    cpuInfo.lastHit = true;
                 }
                 else {
-                    goRight = false;
-                    lastHit = false;
+                    cpuInfo.goRight = false;
+                    cpuInfo.lastHit = false;
                 }
-                coords.r = this.shipFoundR;
-                coords.c = this.shipFoundC + this.move
+                cpuInfo.coords.r = cpuInfo.shipFoundR;
+                cpuInfo.coords.c = cpuInfo.shipFoundC + cpuInfo.move
+                return cpuInfo.coords;
+            }
+            else if (cpuInfo.goLeft) {
+                cpuInfo.move--;
+                if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].ship) {
+                    cpuInfo.goUp = false;
+                    cpuInfo.goDown = false;
+                    cpuInfo.lastHit = true;
+                }
+                else {
+                    cpuInfo.goLeft = false;
+                    cpuInfo.lastHit = false;
+                }
+                cpuInfo.coords.r = cpuInfo.shipFoundR;
+                cpuInfo.coords.c = cpuInfo.shipFoundC + cpuInfo.move
+                return cpuInfo.coords;
+            }
+            else if (cpuInfo.goUp) {
+                cpuInfo.move--;
+                if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].ship) {
+                    cpuInfo.goLeft = false;
+                    cpuInfo.goRight = false;
+                    cpuInfo.lastHit = true;
+                }
+                else {
+                    cpuInfo.goUp = false;
+                    cpuInfo.lastHit = false;
+                }
+                cpuInfo.coords.r = cpuInfo.shipFoundR + cpuInfo.move;
+                cpuInfo.coords.c = cpuInfo.shipFoundC;
                 return coords;
             }
-            else if (this.goLeft) {
-                this.move--;
-                if (this.opponentBoard.squares[this.shipFoundR][this.shipFoundC + this.move].ship) {
-                    goUp = false;
-                    goDown = false;
-                    lastHit = true;
+            else if (cpuInfo.goDown) {
+                cpuInfo.move++;
+                if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].ship) {
+                    cpuInfo.goLeft = false;
+                    cpuInfo.lastHit = true;
                 }
                 else {
-                    goLeft = false;
-                    lastHit = false;
+                    cpuInfo.goDown = false;
+                    cpuInfo.lastHit = false;
                 }
-                coords.r = this.shipFoundR;
-                coords.c = this.shipFoundC + this.move
-                return coords;
-            }
-            else if (goUp) {
-                this.move--;
-                if (this.opponentBoard.squares[this.shipFoundR + this.move][this.shipFoundC].ship) {
-                    goLeft = false;
-                    goRight = false;
-                    lastHit = true;
-                }
-                else {
-                    goUp = false;
-                    lastHit = false;
-                }
-                coords.r = this.shipFoundR + this.move;
-                coords.c = this.shipFoundC;
-                return coords;
-            }
-            else if (goDown) {
-                this.move++;
-                if (this.opponentBoard.squares[this.shipFoundR + this.move][this.shipFoundC].ship) {
-                    goLeft = false;
-                    lastHit = true;
-                }
-                else {
-                    goDown = false;
-                    lastHit = false;
-                }
-                coords.r = this.shipFoundR + this.move;
-                coords.c = this.shipFoundC;
-                return coords;
+                cpuInfo.coords.r = shipFoundR + move;
+                cpuInfo.coords.c = shipFoundC;
+                return cpuInfo.coords;
             }
         }
     }
 
     function cpuRandomAttack () {
-        let coords = {
-            r: 0,
-            c: 0,
-        };
         let row = randomSpot();
         let col = randomSpot();
         while (opponentBoard.squares[row][col].hit) {
             row = randomSpot();
             col = randomSpot();
         }
-        if(opponentBoard.squares[row][col].ship) {
-            this.shipFound = true;
-            this.shipFoundR = row;
-            this.shipFoundC = col;
+        if(opponentBoard.squares[row][col].shipHere) {
+            cpuInfo.shipFound = true;
+            cpuInfo.shipFoundR = row;
+            cpuInfo.shipFoundC = col;
         }
-        coords.r = row;
-        coords.c = col;
-        return coords;
+        cpuInfo.coords.r = row;
+        cpuInfo.coords.c = col;
+        return cpuInfo.coords;
     }
 
     return {
@@ -135,7 +136,7 @@ const Player = (title, myBoard, opponentBoard, human) => {
         opponentBoard,
         cpuRandomAttack,
         cpuFoundAttack,
-        shipFound,
+        cpuInfo,
     }
 }
 
