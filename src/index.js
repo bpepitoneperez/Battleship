@@ -1,6 +1,4 @@
 import './style.css';
-import { createGameRandom } from './gameloop';
-import {createLayout} from './DOMDisplay';
+import {initialSetup} from './gameloop';
 
-createLayout();
-//createGameRandom();
+initialSetup();

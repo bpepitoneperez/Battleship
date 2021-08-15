@@ -2,6 +2,9 @@ const Ship = (title, length) => {
     let hits = 0;
     let position = [];
     let sunk = false;
+    let deployed = false;
+    let shipDomName = "";
+    let horizontal;
 
     for (let i = 0; i < length; i++) {
         position[i] = {
@@ -35,6 +38,9 @@ const Ship = (title, length) => {
         position,
         isSunk,
         sunk,
+        deployed,
+        shipDomName,
+        horizontal,
     }
 }
 
