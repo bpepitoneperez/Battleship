@@ -1,5 +1,5 @@
-import {setupCPUBoard, player1Turn, player1, player2, attack, game,
-    carrier, battleship, destroyer, submarine, patrol} from './gameloop';
+import {setupCPUBoard, player1Turn, player1, player2, attack, game, canAttack,
+    carrier, battleship, destroyer, submarine, patrol, cpuAttack} from './gameloop';
 
 const body = document.body;
 
@@ -9,48 +9,59 @@ let activeShip;
 let activeShipDiv;
 
 function createLayout () {
-    displayHeader();
-    createSetupArea();
-    createHTML();
-    createGameSetup();
+    createTopArea();
+    createSetupScreen();
+    createShipSetup();
+    createSetupBoard();
 }
 
-function displayHeader () {
+function createTopArea () {
+    const topDiv = document.createElement('div');
+    topDiv.id = 'topDiv';
+
     const headerDiv = document.createElement('div');
     headerDiv.id = 'header-div';
     headerDiv.textContent = 'Battleship';
 
-    body.appendChild(headerDiv);
+    const startDiv = document.createElement('div');
+    startDiv.id = 'game-start';
+    startDiv.textContent = 'start game';
+    startDiv.addEventListener('click', () => {
+        if (carrier.deployed && battleship.deployed && destroyer.deployed && 
+            submarine.deployed && patrol.deployed) {
+                removeSetupArea();
+                makeCPUBoard();
+                setupCPUBoard();
+                switchPerspective();
+                game = true;
+                canAttack = true;
+        }
+    });
+    topDiv.appendChild(headerDiv);
+    topDiv.appendChild(startDiv);
+
+    body.appendChild(topDiv);
 }
 
-function createSetupArea () {
-    const setupArea = document.createElement('div');
-    setupArea.id = 'setup-area';
-    body.appendChild(setupArea);
-}
-
-function createHTML () {
+function createSetupScreen () {
     const content = document.createElement('div');
     content.id = 'content';
 
+    const setupArea = document.createElement('div');
+    setupArea.id = 'setup-area';
+
+
+    content.appendChild(setupArea);
+
     body.appendChild(content);
-
-    const display = document.createElement('div');
-    display.id = 'display';
-
-    body.appendChild(display);
-    
-    createEmptyBoards();
 }
 
-function createEmptyBoards () {
+function createSetupBoard() {
     const content = document.querySelector('#content');
-    while (content.firstChild) {
-        content.removeChild(content.firstChild);
-    }
 
     const board1 = document.createElement('div');
     board1.id = 'board1';
+    board1.setAttribute('class', 'big');
 
     content.appendChild(board1);
 
@@ -84,56 +95,17 @@ function createEmptyBoards () {
                     }
                 }
             });
-            col.addEventListener('click', () => {
-                if (!player1Turn && game) {
-                    clickAttack(r, c);
-                }
-            });
             row.appendChild(col);
         }
         board1.appendChild(row);
     }
-
-    const board2 = document.createElement('div');
-    board2.id = 'board2';
-
-    content.appendChild(board2);
-
-    for (let r = 0; r < 10; r++) {
-        let row = document.createElement('div')
-        row.setAttribute('class', 'rows');
-        for (let c = 0; c < 10; c++) {
-            let col = document.createElement('div');
-            col.setAttribute('class', 'squares');
-            col.id = ('board2-' + r + c);
-            col.addEventListener('click', () => {
-                if (player1Turn && game) {
-                    clickAttack(r, c);
-                }
-            });
-            row.appendChild(col);
-        }
-        board2.appendChild(row);
-    }
 }
 
-function createGameSetup () {
+function createShipSetup () {
     const area = document.getElementById('setup-area');
-    const startDiv = document.createElement('div');
-    startDiv.id = 'game-start';
-    startDiv.textContent = 'start game';
-    startDiv.addEventListener('click', () => {
-        if (carrier.deployed && battleship.deployed && destroyer.deployed && 
-            submarine.deployed && patrol.deployed) {
-                game = true;
-                setupCPUBoard();
-        }
-    });
-    area.appendChild(startDiv);
 
     const shipDiv = document.createElement('div');
     shipDiv.id = 'ships-div';
-
 
     const carrierDivElements = document.createElement('div');
     carrierDivElements.setAttribute('class', 'ship-div-elements');
@@ -323,13 +295,14 @@ function createGameSetup () {
 
     const patrol1 = document.createElement('div');
     patrol1.setAttribute('class', 'ship-parts');
+    patrol1.id = 'patrol1';
     const patrol2 = document.createElement('div');
     patrol2.setAttribute('class', 'ship-parts');
+    patrol2.id = 'patrol2';
 
     patrolDiv.appendChild(patrol1);
     patrolDiv.appendChild(patrol2);
 
-    //patrolDivElements.appendChild(patrolDivText);
     patrolDivElements.appendChild(patrolDiv);
 
     shipDiv.appendChild(carrierDivElements);
@@ -339,6 +312,39 @@ function createGameSetup () {
     shipDiv.appendChild(patrolDivElements);
 
     area.appendChild(shipDiv);
+}
+
+function removeSetupArea() {
+    const content = document.querySelector('#content');
+    const area = document.getElementById('setup-area');
+    content.removeChild(area);
+}
+
+function makeCPUBoard () {
+    const content = document.querySelector('#content');
+
+    const board2 = document.createElement('div');
+    board2.id = 'board2';
+    board2.setAttribute('class', 'small');
+
+    content.appendChild(board2);
+
+    for (let r = 0; r < 10; r++) {
+        let row = document.createElement('div')
+        row.setAttribute('class', 'rows');
+        for (let c = 0; c < 10; c++) {
+            let col = document.createElement('div');
+            col.setAttribute('class', 'squares');
+            col.id = ('board2-' + r + c);
+            col.addEventListener('click', () => {
+                if (player1Turn && canAttack) {
+                    clickAttack(r, c);
+                }
+            });
+            row.appendChild(col);
+        }
+        board2.appendChild(row);
+    }
 }
 
 function hoverPlace (r, c) {
@@ -445,6 +451,34 @@ function switchAxis () {
     }
 }
 
+function switchPerspective () {
+    const content = document.getElementById('content');
+    let last = content.firstChild;
+    content.removeChild(content.firstChild);
+    content.firstChild.setAttribute('class', 'big');
+    content.appendChild(last);
+    last.setAttribute('class', 'small');
+    changeShipPartsSize();
+}
+
+function changeShipPartsSize() {
+    const allShipParts = document.querySelectorAll('.ship-parts');
+    allShipParts.forEach(ship => {
+        if (!player1Turn) {
+            ship.setAttribute('name', 'big');
+        }
+        else {
+            ship.setAttribute('name', 'small');
+        }
+    });
+    if (!player1Turn) {
+        cpuAttack();
+    }
+    else {
+        canAttack = true;
+    }
+}
+
 
 function clickAttack (r, c) {
     if (player1Turn) {
@@ -457,18 +491,14 @@ function clickAttack (r, c) {
 
 function hitUpdate (r, c) {
     let square;
-    console.log(player1Turn);
     if (!player1Turn) {
         let hitShipPart = player1.myBoard.squares[r][c].shipPart + 1;
         let divName = player1.myBoard.squares[r][c].ship.shipDomName;
         divName = divName + hitShipPart;
-        console.log(divName);
         square = document.getElementById(divName);
-        console.log(square);
     }
     else {
         square = document.getElementById('board2-' + r + c);
-        console.log(square);
     }
     square.textContent = 'x';
 }
@@ -486,22 +516,26 @@ function missUpdate (r,c) {
 
 function shipDestroyed (ship) {
     for (let i = 0; i < ship.length; i++) {
+        console.log(ship);
         let r = ship.position[i].boardR;
         let c = ship.position[i].boardC;
         let square;
         if (!player1Turn) {
-            let divName = ship.shipDomName + 'Div';
+            let divName = ship.shipDomName + (i + 1);
             console.log(divName);
             square = document.getElementById(divName);
             console.log(square);
         }
         else {
             square = document.getElementById('board2-' + r + c);
+            console.log('board2-' + r + c)
+            console.log(square)
         }
         square.style.backgroundColor = 'red';
     }
 }
 
+//SET THIS UP
 function gameOver () {
     const display = document.querySelector('#display');
     if (player1Turn) {
@@ -513,9 +547,10 @@ function gameOver () {
     playAgainScreen();
 }
 
+//SET THIS UP
 function playAgainScreen() {
 
 }
 
 
-export {createLayout, hitUpdate, missUpdate, shipDestroyed, gameOver};
+export {createLayout, hitUpdate, missUpdate, shipDestroyed, gameOver, switchPerspective};

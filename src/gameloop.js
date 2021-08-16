@@ -1,9 +1,10 @@
 import { Player } from './player';
 import { Ship } from './ships';
 import { Gameboard } from './gameboard';
-import { createLayout, hitUpdate, missUpdate, shipDestroyed, gameOver } from './DOMDisplay';
+import { createLayout, hitUpdate, missUpdate, shipDestroyed, gameOver, switchPerspective } from './DOMDisplay';
 
 let player1Turn;
+let canAttack = false;
 let board1;
 let board2;
 let player1;
@@ -98,33 +99,41 @@ function attack (player, r, c) {
                     gameOver();
                 }
             }
+            if (!player1Turn && game) {
+                cpuAttack();
+            }
         }
         else {
             console.log('Miss')
             missUpdate(r, c);
             player1Turn = !player1Turn;
+            if (!player1Turn) {
+                canAttack = false;
+            }
+            setTimeout(() => {switchPerspective();}, 1000);
         }
-    }
-    if (!player1Turn) {
-        let coords;
-        if (player2.cpuInfo.shipFound) {
-            //console.log('found');
-            coords = player2.cpuFoundAttack();
-        }
-        else {
-            //console.log('random');
-            player2.resetCPUInfo();
-            coords = player2.cpuRandomAttack();
-        }
-
-        if (!coords) {
-            //console.log('failsafe');
-            player2.resetCPUInfo();
-            coords = player2.cpuRandomAttack();
-        }
-        setTimeout(() => {attack(player2, coords.r, coords.c);}, 800);
     }
 }
 
-export {initialSetup, setupCPUBoard, cpuPlaceShip, player1Turn, player1, player2,
-     attack, game, carrier, battleship, destroyer, submarine, patrol, newGame};
+function cpuAttack () {
+    let coords;
+    if (player2.cpuInfo.shipFound) {
+        //console.log('found');
+        coords = player2.cpuFoundAttack();
+    }
+    else {
+        //console.log('random');
+        player2.resetCPUInfo();
+        coords = player2.cpuRandomAttack();
+    }
+
+    if (!coords) {
+        //console.log('failsafe');
+        player2.resetCPUInfo();
+        coords = player2.cpuRandomAttack();
+    }
+    setTimeout(() => {attack(player2, coords.r, coords.c);}, 1500);
+}
+
+export {initialSetup, setupCPUBoard, cpuPlaceShip, player1Turn, player1, player2, canAttack,
+     attack, game, carrier, battleship, destroyer, submarine, patrol, newGame, cpuAttack};

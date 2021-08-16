@@ -1,3 +1,8 @@
+:root {
+    --small-square: 2vw;
+    --big-square: 4vw;
+}
+
 html {
     border: 0;
     margin: 0;
@@ -27,16 +32,15 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-around;
-    width: 100%;
-    height: 150px;
+    width: 20%;
+    height: 100%;
 }
 
 #ships-div {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    width: 80%;
 }
 
 .ship-placements {
@@ -67,10 +71,17 @@ body {
     outline-width: 2px;
     outline-color:blanchedalmond;
     background-color: black;
-    width: 3vw;
-    height: 3vw;
+    width: var(--big-square);
+    height: var(--big-square);
     margin: 2px;
     color: white;
+}
+
+.ship-parts[name='small'] {
+    width: var(--small-square);
+    height: var(--small-square);
+    outline-width: 1px;
+    margin: 1px;
 }
 
 #content {
@@ -93,12 +104,23 @@ body {
     outline: solid;
     outline-width: 1px;
     outline-color: rgb(38, 201, 201);
-    width: 3vw;
-    height: 3vw;
     margin: 2px;
     background-color: rgb(142, 221, 195);
     color: black;
-    font-size: 2vw;
+}
+
+.big>.rows>.squares {
+    width: var(--big-square);
+    height: var(--big-square);
+    font-size: var(--big-square);
+    margin: 2px;
+}
+
+.small>.rows>.squares {
+    width: var(--small-square);
+    height: var(--small-square);
+    font-size: var(--small-square);
+    margin: 1px;
 }
 
 .placed {

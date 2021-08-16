@@ -54,7 +54,7 @@ const Gameboard = (title, length) => {
                 squares[startingRow + i][startingCol].ship = ship;
                 squares[startingRow + i][startingCol].shipHere = true;
                 squares[startingRow + i][startingCol].shipPart = i;
-                ship.position[i].boardR = startingRow;
+                ship.position[i].boardR = startingRow + i;
                 ship.position[i].boardC = startingCol;
             }
             
