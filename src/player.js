@@ -33,19 +33,19 @@ const Player = (title, myBoard, opponentBoard, human) => {
             if (!cpuInfo.lastHit) {
                 cpuInfo.move = 0;
             }
-            if (cpuInfo.goRight && cpuInfo.shipFoundC + cpuInfo.move + 1 > 9) {
+            if (cpuInfo.goRight && cpuInfo.shipFoundC + (cpuInfo.move + 1) > 9) {
                 cpuInfo.goRight = false;
                 cpuInfo.move = 0;
             }
-            else if(cpuInfo.goLeft && cpuInfo.shipFoundC + cpuInfo.move - 1 < 0) {
+            else if(cpuInfo.goLeft && cpuInfo.shipFoundC + (cpuInfo.move - 1) < 0) {
                 cpuInfo.goLeft = false;
                 cpuInfo.move = 0;
             }
-            else if(cpuInfo.goUp && cpuInfo.shipFoundC + cpuInfo.move - 1 < 0) {
+            else if(cpuInfo.goUp && cpuInfo.shipFoundR + (cpuInfo.move - 1) < 0) {
                 cpuInfo.goUp = false;
                 cpuInfo.move = 0;
             }
-            else if(cpuInfo.goDown && cpuInfo.shipFoundC + cpuInfo.move + 1 > 9) {
+            else if(cpuInfo.goDown && cpuInfo.shipFoundR + (cpuInfo.move + 1) > 9) {
                 cpuInfo.goDown = false;
                 cpuInfo.move = 0;
             }
@@ -53,17 +53,6 @@ const Player = (title, myBoard, opponentBoard, human) => {
 
             if (cpuInfo.goRight) {
                 cpuInfo.move++;
-                if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].ship) {
-                    cpuInfo.goUp = false;
-                    cpuInfo.goDown = false;
-                    cpuInfo.lastHit = true;
-                }
-                else {
-                    cpuInfo.goRight = false;
-                    cpuInfo.lastHit = false;
-                }
-                cpuInfo.hitCoords.r = cpuInfo.shipFoundR;
-                cpuInfo.hitCoords.c = cpuInfo.shipFoundC + cpuInfo.move
                 if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].hit) {
                     cpuInfo.goRight = false;
                     cpuInfo.lastHit = false;
@@ -71,23 +60,23 @@ const Player = (title, myBoard, opponentBoard, human) => {
                     return cpuFoundAttack();
                 }
                 else {
+                    if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].ship) {
+                        cpuInfo.goUp = false;
+                        cpuInfo.goDown = false;
+                        cpuInfo.lastHit = true;
+                    }
+                    else {
+                        cpuInfo.goRight = false;
+                        cpuInfo.lastHit = false;
+                    }
+                    cpuInfo.hitCoords.r = cpuInfo.shipFoundR;
+                    cpuInfo.hitCoords.c = cpuInfo.shipFoundC + cpuInfo.move
                     return cpuInfo.hitCoords;
                 }
                 
             }
             else if (cpuInfo.goLeft) {
                 cpuInfo.move--;
-                if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].ship) {
-                    cpuInfo.goUp = false;
-                    cpuInfo.goDown = false;
-                    cpuInfo.lastHit = true;
-                }
-                else {
-                    cpuInfo.goLeft = false;
-                    cpuInfo.lastHit = false;
-                }
-                cpuInfo.hitCoords.r = cpuInfo.shipFoundR;
-                cpuInfo.hitCoords.c = cpuInfo.shipFoundC + cpuInfo.move
                 if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].hit) {
                     cpuInfo.goLeft = false;
                     cpuInfo.lastHit = false;
@@ -95,22 +84,22 @@ const Player = (title, myBoard, opponentBoard, human) => {
                     return cpuFoundAttack();
                 }
                 else {
+                    if (opponentBoard.squares[cpuInfo.shipFoundR][cpuInfo.shipFoundC + cpuInfo.move].ship) {
+                        cpuInfo.goUp = false;
+                        cpuInfo.goDown = false;
+                        cpuInfo.lastHit = true;
+                    }
+                    else {
+                        cpuInfo.goLeft = false;
+                        cpuInfo.lastHit = false;
+                    }
+                    cpuInfo.hitCoords.r = cpuInfo.shipFoundR;
+                    cpuInfo.hitCoords.c = cpuInfo.shipFoundC + cpuInfo.move
                     return cpuInfo.hitCoords;
                 }
             }
             else if (cpuInfo.goUp) {
                 cpuInfo.move--;
-                if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].ship) {
-                    cpuInfo.goLeft = false;
-                    cpuInfo.goRight = false;
-                    cpuInfo.lastHit = true;
-                }
-                else {
-                    cpuInfo.goUp = false;
-                    cpuInfo.lastHit = false;
-                }
-                cpuInfo.hitCoords.r = cpuInfo.shipFoundR + cpuInfo.move;
-                cpuInfo.hitCoords.c = cpuInfo.shipFoundC;
                 if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].hit) {
                     cpuInfo.goUp = false;
                     cpuInfo.lastHit = false;
@@ -118,21 +107,22 @@ const Player = (title, myBoard, opponentBoard, human) => {
                     return cpuFoundAttack();
                 }
                 else {
+                    if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].ship) {
+                        cpuInfo.goLeft = false;
+                        cpuInfo.goRight = false;
+                        cpuInfo.lastHit = true;
+                    }
+                    else {
+                        cpuInfo.goUp = false;
+                        cpuInfo.lastHit = false;
+                    }
+                    cpuInfo.hitCoords.r = cpuInfo.shipFoundR + cpuInfo.move;
+                    cpuInfo.hitCoords.c = cpuInfo.shipFoundC;
                     return cpuInfo.hitCoords;
                 }
             }
             else if (cpuInfo.goDown) {
                 cpuInfo.move++;
-                if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].ship) {
-                    cpuInfo.goLeft = false;
-                    cpuInfo.lastHit = true;
-                }
-                else {
-                    cpuInfo.goDown = false;
-                    cpuInfo.lastHit = false;
-                }
-                cpuInfo.hitCoords.r = cpuInfo.shipFoundR + cpuInfo.move;
-                cpuInfo.hitCoords.c = cpuInfo.shipFoundC;
                 if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].hit) {
                     cpuInfo.goDown = false;
                     cpuInfo.lastHit = false;
@@ -140,6 +130,16 @@ const Player = (title, myBoard, opponentBoard, human) => {
                     return cpuFoundAttack();
                 }
                 else {
+                    if (opponentBoard.squares[cpuInfo.shipFoundR + cpuInfo.move][cpuInfo.shipFoundC].ship) {
+                        cpuInfo.goLeft = false;
+                        cpuInfo.lastHit = true;
+                    }
+                    else {
+                        cpuInfo.goDown = false;
+                        cpuInfo.lastHit = false;
+                    }
+                    cpuInfo.hitCoords.r = cpuInfo.shipFoundR + cpuInfo.move;
+                    cpuInfo.hitCoords.c = cpuInfo.shipFoundC;
                     return cpuInfo.hitCoords;
                 }
             }

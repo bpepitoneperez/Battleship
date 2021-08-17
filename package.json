@@ -30,15 +30,22 @@
     "testMatch": [
       "**/?(*.)+(spec|test).js"
     ],
-    "modulePaths": ["/shared/vendor/modules"],
-    "moduleDirectories": ["node_modules", "bower_components", "shared"],
-
+    "modulePaths": [
+      "/shared/vendor/modules"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "bower_components",
+      "shared"
+    ],
     "moduleNameMapper": {
       "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
       "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js",
-
       "^config$": "<rootDir>/configs/app-config.js"
     }
+  },
+  "dependencies": {
+    "@material-ui/icons": "^4.11.2",
+    "material-design-icons": "^3.0.1"
   }
 }
-

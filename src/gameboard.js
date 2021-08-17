@@ -40,10 +40,13 @@ const Gameboard = (title, length) => {
         return true;
     }
     function placeShip(ship, startingRow, startingCol, horizontal) {
-        ships.push(ship);
+        if (!ships.includes(ship)) {
+            ships.push(ship);
+        }
         ship.deployed = true;
         for (let i = 0; i < ship.length; i++) {
             if (horizontal) {
+                ship.horizontal = true;
                 squares[startingRow][startingCol + i].ship = ship;
                 squares[startingRow][startingCol + i].shipHere = true;
                 squares[startingRow][startingCol + i].shipPart = i;
@@ -51,6 +54,7 @@ const Gameboard = (title, length) => {
                 ship.position[i].boardC = startingCol + i;
             }
             else {
+                ship.horizontal = false;
                 squares[startingRow + i][startingCol].ship = ship;
                 squares[startingRow + i][startingCol].shipHere = true;
                 squares[startingRow + i][startingCol].shipPart = i;

@@ -1,9 +1,16 @@
 import {setupCPUBoard, player1Turn, player1, player2, attack, game, canAttack,
-    carrier, battleship, destroyer, submarine, patrol, cpuAttack} from './gameloop';
-
+    carrier, battleship, destroyer, submarine, patrol, cpuAttack, resetEverything,
+    randomlyPlaceShip} from './gameloop';
 const body = document.body;
 
+const resultsDiv = document.createElement('div');
+resultsDiv.id = 'outer-results';
 
+const results = document.createElement('p');
+results.id = 'results';
+results.textContent = 'TEST';
+resultsDiv.appendChild(results);
+body.appendChild(resultsDiv);
 
 let activeShip;
 let activeShipDiv;
@@ -17,28 +24,17 @@ function createLayout () {
 
 function createTopArea () {
     const topDiv = document.createElement('div');
-    topDiv.id = 'topDiv';
+    topDiv.id = 'top-div';
 
     const headerDiv = document.createElement('div');
     headerDiv.id = 'header-div';
-    headerDiv.textContent = 'Battleship';
+    headerDiv.textContent = 'BATTLESHIP';
 
-    const startDiv = document.createElement('div');
-    startDiv.id = 'game-start';
-    startDiv.textContent = 'start game';
-    startDiv.addEventListener('click', () => {
-        if (carrier.deployed && battleship.deployed && destroyer.deployed && 
-            submarine.deployed && patrol.deployed) {
-                removeSetupArea();
-                makeCPUBoard();
-                setupCPUBoard();
-                switchPerspective();
-                game = true;
-                canAttack = true;
-        }
-    });
+    const updateDiv = document.createElement('div');
+    updateDiv.id = 'update-area';
+    updateDiv.textContent = 'Deploy Your Ships!';
     topDiv.appendChild(headerDiv);
-    topDiv.appendChild(startDiv);
+    topDiv.appendChild(updateDiv);
 
     body.appendChild(topDiv);
 }
@@ -54,6 +50,10 @@ function createSetupScreen () {
     content.appendChild(setupArea);
 
     body.appendChild(content);
+
+    const footer = document.createElement('div');
+    footer.id = 'footer';
+    body.appendChild(footer);
 }
 
 function createSetupBoard() {
@@ -113,6 +113,16 @@ function createShipSetup () {
     carrierDiv.setAttribute('class', 'ship-placements');
     carrierDiv.id = 'carrierDiv';
     carrierDiv.draggable = true;
+    carrierDiv.addEventListener('mouseenter', () => {
+        if (!game) {
+            document.body.style.cursor = 'pointer'
+        }
+    });
+    carrierDiv.addEventListener('mouseleave', () => {
+        if (!game) {
+            document.body.style.cursor = 'default'
+        }
+    });
     carrierDiv.addEventListener('click', () => {
         if (carrier.deployed && !game) {
             activeShip = carrier;
@@ -161,6 +171,16 @@ function createShipSetup () {
     battleshipDiv.setAttribute('class', 'ship-placements');
     battleshipDiv.id = 'battleshipDiv';
     battleshipDiv.draggable = true;
+    battleshipDiv.addEventListener('mouseenter', () => {
+        if (!game) {
+            document.body.style.cursor = 'pointer'
+        }
+    });
+    battleshipDiv.addEventListener('mouseleave', () => {
+        if (!game) {
+            document.body.style.cursor = 'default'
+        }
+    });
     battleshipDiv.addEventListener('click', () => {
         if (battleship.deployed && !game) {
             activeShip = battleship;
@@ -206,6 +226,16 @@ function createShipSetup () {
     destroyerDiv.setAttribute('class', 'ship-placements');
     destroyerDiv.id = 'destroyerDiv';
     destroyerDiv.draggable = true;
+    destroyerDiv.addEventListener('mouseenter', () => {
+        if (!game) {
+            document.body.style.cursor = 'pointer'
+        }
+    });
+    destroyerDiv.addEventListener('mouseleave', () => {
+        if (!game) {
+            document.body.style.cursor = 'default'
+        }
+    });
     destroyerDiv.addEventListener('click', () => {
         if (destroyer.deployed && !game) {
             activeShip = destroyer;
@@ -217,6 +247,9 @@ function createShipSetup () {
         if (!game) {
             activeShip = destroyer;
             activeShipDiv = destroyerDiv;
+            if (activeShip.deployed) {
+                pickUpFromBoard();
+            }
         }
     });
 
@@ -242,6 +275,16 @@ function createShipSetup () {
     submarineDiv.setAttribute('class', 'ship-placements');
     submarineDiv.id = 'submarineDiv';
     submarineDiv.draggable = true;
+    submarineDiv.addEventListener('mouseenter', () => {
+        if (!game) {
+            document.body.style.cursor = 'pointer'
+        }
+    });
+    submarineDiv.addEventListener('mouseleave', () => {
+        if (!game) {
+            document.body.style.cursor = 'default'
+        }
+    });
     submarineDiv.addEventListener('click', () => {
         if (submarine.deployed && !game) {
             activeShip = submarine;
@@ -253,6 +296,9 @@ function createShipSetup () {
         if (!game) {
             activeShip = submarine;
             activeShipDiv = submarineDiv;
+            if (activeShip.deployed) {
+                pickUpFromBoard();
+            }
         }
     });
 
@@ -279,6 +325,16 @@ function createShipSetup () {
     patrolDiv.setAttribute('class', 'ship-placements');
     patrolDiv.id = 'patrolDiv';
     patrolDiv.draggable = true;
+    patrolDiv.addEventListener('mouseenter', () => {
+        if (!game) {
+            document.body.style.cursor = 'pointer'
+        }
+    });
+    patrolDiv.addEventListener('mouseleave', () => {
+        if (!game) {
+            document.body.style.cursor = 'default'
+        }
+    });
     patrolDiv.addEventListener('click', () => {
         if (patrol.deployed && !game) {
             activeShip = patrol;
@@ -290,6 +346,9 @@ function createShipSetup () {
         if (!game) {
             activeShip = patrol;
             activeShipDiv = patrolDiv;
+            if (activeShip.deployed) {
+                pickUpFromBoard();
+            }
         }
     });
 
@@ -312,6 +371,100 @@ function createShipSetup () {
     shipDiv.appendChild(patrolDivElements);
 
     area.appendChild(shipDiv);
+
+    const settingsDiv = document.createElement('div');
+    settingsDiv.id = 'settings';
+
+    const shipButtonsDiv = document.createElement('div');
+    shipButtonsDiv.id = 'ship-buttons-div';
+
+    const randomShips = document.createElement('div');
+    randomShips.setAttribute('class', 'ship-buttons');
+    randomShips.textContent = 'Random';
+    randomShips.addEventListener('click', () => {
+        if (!game) {
+            setShipsRandomly();
+        }
+    });
+
+    const resetShips = document.createElement('div');
+    resetShips.setAttribute('class', 'ship-buttons');
+    resetShips.textContent = 'Reset';
+    resetShips.addEventListener('click', () => {
+        if (!game) {
+            resetShipSetup();
+        }
+    });
+
+    shipButtonsDiv.appendChild(randomShips);
+    shipButtonsDiv.appendChild(resetShips);
+
+    settingsDiv.appendChild(shipButtonsDiv);
+
+    const startDiv = document.createElement('div');
+    startDiv.id = 'game-start';
+    startDiv.textContent = 'Play!';
+    startDiv.addEventListener('click', () => {
+        if (carrier.deployed && battleship.deployed && destroyer.deployed && 
+            submarine.deployed && patrol.deployed) {
+                removeSetupArea();
+                makeCPUBoard();
+                setupCPUBoard();
+                switchPerspective();
+                game = true;
+                canAttack = true;
+        }
+    });
+
+    settingsDiv.appendChild(startDiv);
+
+    area.appendChild(settingsDiv);
+}
+
+function resetShipSetup() {
+    const content = document.querySelector('#content');
+    while (content.firstChild) {
+        content.removeChild(content.firstChild);
+    }
+    const footer = document.getElementById('footer');
+    body.removeChild(content);
+    body.removeChild(footer);
+
+    resultsDiv.setAttribute('class', '');
+    results.textContent = '';
+
+    resetEverything();
+    createSetupScreen();
+    createShipSetup();
+    createSetupBoard();
+}
+
+function setShipsRandomly () {
+    resetShipSetup();
+    activeShip = carrier;
+    activeShipDiv = document.getElementById('carrierDiv');
+    randomlyPlaceShip(player1, activeShip);
+    placeShip(activeShip.position[0].boardR, activeShip.position[0].boardC);
+
+    activeShip = battleship;
+    activeShipDiv = document.getElementById('battleshipDiv');
+    randomlyPlaceShip(player1, activeShip);
+    placeShip(activeShip.position[0].boardR, activeShip.position[0].boardC);
+
+    activeShip = destroyer;
+    activeShipDiv = document.getElementById('destroyerDiv');
+    randomlyPlaceShip(player1, activeShip);
+    placeShip(activeShip.position[0].boardR, activeShip.position[0].boardC);
+
+    activeShip = submarine;
+    activeShipDiv = document.getElementById('submarineDiv');
+    randomlyPlaceShip(player1, activeShip);
+    placeShip(activeShip.position[0].boardR, activeShip.position[0].boardC);
+
+    activeShip = patrol;
+    activeShipDiv = document.getElementById('patrolDiv');
+    randomlyPlaceShip(player1, activeShip);
+    placeShip(activeShip.position[0].boardR, activeShip.position[0].boardC);
 }
 
 function removeSetupArea() {
@@ -336,6 +489,14 @@ function makeCPUBoard () {
             let col = document.createElement('div');
             col.setAttribute('class', 'squares');
             col.id = ('board2-' + r + c);
+            col.addEventListener('mouseenter', () => {
+                if(player1Turn && canAttack && !player2.myBoard.squares[r][c].hit) {
+                    document.body.style.cursor = 'crosshair';
+                }
+            })
+            col.addEventListener('mouseleave', () => {
+                document.body.style.cursor = 'default';
+            })
             col.addEventListener('click', () => {
                 if (player1Turn && canAttack) {
                     clickAttack(r, c);
@@ -378,20 +539,35 @@ function hoverRemove (r, c) {
             else {
                 square = document.getElementById(('board1-' + (r + i) + c));
             }
-            square.style.backgroundColor = 'rgb(142, 221, 195)';
+            square.style.backgroundColor = 'rgba(195, 233, 238, 0.6)';
         }
     }
     else {
         if (!player1.myBoard.squares[r][c].ship) {
             let square = document.getElementById(('board1-' + r + c));
-            square.style.backgroundColor = 'rgb(142, 221, 195)';
+            square.style.backgroundColor = 'rgba(195, 233, 238, 0.6)';
         }
     }
 }
 
 function placeShip (r, c) {
-    player1.myBoard.placeShip(activeShip, r, c, activeShip.horizontal);
+    if(!player1.myBoard.squares[r][c].shipHere){
+        player1.myBoard.placeShip(activeShip, r, c, activeShip.horizontal);
+    }
     let square = document.getElementById(('board1-' + r + c));
+    if (square.firstChild) {
+        for (let i = 0; i < activeShip.length; i++) {
+            let oldSquare;
+            if (activeShip.horizontal) {
+                oldSquare = document.getElementById(('board1-' + (r + i) + c));
+            }
+            else {
+                oldSquare = document.getElementById(('board1-' + r + (c + i)));
+            }
+            oldSquare.style.outlineWidth = '1px';
+            oldSquare.style.backgroundColor = 'rgba(195, 233, 238, 0.6)';
+        }
+    }
     while(square.firstChild) {
         square.removeChild(square.firstChild);
     }
@@ -399,9 +575,11 @@ function placeShip (r, c) {
     activeShipDiv.setAttribute('class', 'placed');
     if(activeShip.horizontal) {
         activeShipDiv.setAttribute('name', 'horizontal');
+        square.setAttribute('name', 'horizontal');
     }
     else {
         activeShipDiv.setAttribute('name', 'vertical');
+        square.setAttribute('name', 'vertical');
     }
     for (let i = 0; i < activeShip.length; i++) {
         let oldSquare;
@@ -411,20 +589,17 @@ function placeShip (r, c) {
         else {
             oldSquare = document.getElementById(('board1-' + (r + i) + c));
         }
-        oldSquare.style.backgroundColor = 'rgb(142, 221, 195)';
+        oldSquare.style.backgroundColor = 'rgba(100, 150, 238, 0.6)';
     }
 }
 
 function pickUpFromBoard () {
-    console.log('pick up');
     let oldR = activeShip.position[0].boardR;
     let oldC = activeShip.position[0].boardC;
     removeShip();
-    console.log('removed');
     activeShipDiv.addEventListener('dragend', () => {
         if (!activeShip.deployed) {
             placeShip(oldR, oldC);
-            console.log('placed back', player1.myBoard);
         }
     })
 }
@@ -463,6 +638,7 @@ function switchPerspective () {
 
 function changeShipPartsSize() {
     const allShipParts = document.querySelectorAll('.ship-parts');
+    const updateArea = document.getElementById('update-area');
     allShipParts.forEach(ship => {
         if (!player1Turn) {
             ship.setAttribute('name', 'big');
@@ -473,9 +649,11 @@ function changeShipPartsSize() {
     });
     if (!player1Turn) {
         cpuAttack();
+        updateArea.textContent = 'Enemy Turn';
     }
     else {
         canAttack = true;
+        updateArea.textContent = 'Your Turn';
     }
 }
 
@@ -500,7 +678,11 @@ function hitUpdate (r, c) {
     else {
         square = document.getElementById('board2-' + r + c);
     }
-    square.textContent = 'x';
+    let icon = document.createElement('span');
+    icon.setAttribute('class', 'material-icons-outlined');
+    icon.textContent = 'radio_button_checked';
+    icon.style.color = 'red'
+    square.appendChild(icon);
 }
 
 function missUpdate (r,c) {
@@ -511,45 +693,79 @@ function missUpdate (r,c) {
     else {
         square = document.getElementById('board2-' + r + c);
     }
-    square.textContent = 'o';
+    let icon = document.createElement('span');
+    icon.setAttribute('class', 'material-icons-outlined');
+    icon.textContent = 'radio_button_checked';
+    icon.style.color = 'white'
+    square.appendChild(icon);
 }
 
 function shipDestroyed (ship) {
     for (let i = 0; i < ship.length; i++) {
-        console.log(ship);
         let r = ship.position[i].boardR;
         let c = ship.position[i].boardC;
         let square;
         if (!player1Turn) {
             let divName = ship.shipDomName + (i + 1);
-            console.log(divName);
-            square = document.getElementById(divName);
-            console.log(square);
+            let shipDiv = document.getElementById(divName);
+            shipDiv.style.backgroundColor = 'rgba(255, 70, 70, 0.7)'
+            square = document.getElementById('board1-' + r + c);
         }
         else {
             square = document.getElementById('board2-' + r + c);
-            console.log('board2-' + r + c)
-            console.log(square)
         }
-        square.style.backgroundColor = 'red';
+        square.style.backgroundColor = 'rgba(255, 100, 70, 0.6)';
     }
-}
-
-//SET THIS UP
-function gameOver () {
-    const display = document.querySelector('#display');
-    if (player1Turn) {
-        display.textContent = 'Player 1 has won!';
+    if(player1Turn) {
+        roundUpdate('You sunk their ' + ship.title + '!');
     }
     else {
-        display.textContent = 'Player 2 has won!';
+        roundUpdate('They sunk your ' + ship.title + '!');
     }
+    
+}
+
+function roundUpdate (update) {
+    results.textContent = update;
+    resultsDiv.setAttribute('class', 'slide-left');
+    canAttack = false;
+    // results.textContent = '';
+    // results.setAttribute('class', '');
+    setTimeout(() => {results.textContent = '';}, 3000);
+    setTimeout(() => {resultsDiv.setAttribute('class', '');}, 3000);
+    setTimeout(() => {canAttack = true;}, 3000);
+}
+
+function gameOver () {
+    game = false;
+    canAttack = false;
+    const updateDiv = document.getElementById('update-area');
+    if (player1Turn) {
+        updateDiv.textContent= 'You Win!';
+    }
+    else {
+        updateDiv.textContent= 'You Lose!';
+    }
+    
     playAgainScreen();
 }
 
-//SET THIS UP
-function playAgainScreen() {
 
+function playAgainScreen() {
+    const content = document.querySelector('#content');
+    while (content.firstChild) {
+        content.removeChild(content.firstChild);
+    }
+    const updateDiv = document.getElementById('update-area');
+    const playAgainDiv = document.createElement('div');
+    playAgainDiv.id = 'play-again';
+    playAgainDiv.textContent = 'Play Again?'
+    content.appendChild(playAgainDiv);
+    playAgainDiv.addEventListener('click', () => {
+        content.removeChild(playAgainDiv);
+        updateDiv.textContent = 'Deploy Your Ships!';
+        resetShipSetup();
+    });
 }
 
 
