@@ -7,6 +7,7 @@ module.exports = {
     new HtmlWebpackPlugin({
         title: 'Battleship',
         favicon: './src/imgs/favicon-16x16.png',
+        template: 'template.html'
     }),
   ],
   output: {
