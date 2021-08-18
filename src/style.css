@@ -34,6 +34,18 @@
     }
 }
 
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0px black;
+    }
+    50% {
+        box-shadow: 0 0 10px black;
+    }
+    100% {
+        box-shadow: 0 0 0px black;
+    }
+}
+
 .material-icons-outlined {
     font-family: 'Material Icons';
     font-weight: normal;
@@ -68,7 +80,7 @@ html {
     height: 100%;
     background-image: url('./imgs/ocean-background.jpg');
     background-size: cover;
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Alfa Slab One', cursive;
 }
 
 body {
@@ -89,18 +101,26 @@ body {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    height: 18%;
+    height: 16%;
+    margin-bottom: 1em;
 }
 
 #update-area {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 50%;
+    min-height: 70px;
     color: white;
+    background-color: rgba(88, 166, 212, 0.7);
+    border-radius: 20px;
     font-size: 40px;
     text-shadow: 2px 3px black;
     color: white;
+}
+
+#update-area.your-turn {
+    animation: pulse 1.5s infinite;
 }
 
 #footer {
@@ -120,7 +140,11 @@ body {
     text-shadow: 2px 3px black;
     font-size: 70px;
     color: rgb(195, 195, 195);
-    font-family: 'Roboto Slab', serif;
+    font-family: 'Black Ops One', cursive;
+}
+
+#header-div:hover {
+    cursor: pointer;
 }
 
 #setup-area {
@@ -137,8 +161,9 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    height: 35%;
+    min-height: 110px;
     width: 100%;
+
 }
 
 #ship-buttons-div {
@@ -146,14 +171,14 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    width: 100%;
+    min-width: 180px;
 }
 
 .ship-buttons {
     border-radius: 5%;
-    background-color: rgba(52, 118, 218, 0.9);
-    width: 35%;
-    padding: 3%;
+    background-color: rgba(88, 166, 212, 0.86);
+    padding: 10px;
+    min-width: 50px;
     text-align: center;
 }
 
@@ -167,10 +192,10 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    width: 80%;
+    min-width: 150px;
     border-radius: 5%;
-    background-color: rgba(77, 141, 61, 0.9);
-    padding: 3%;
+    background-color: rgba(67, 165, 50, 0.86);
+    padding: 10px;
 }
 
 #game-start:hover {
@@ -189,8 +214,8 @@ body {
 .ship-placements {
     display: flex;
     outline: solid;
-    outline-width: 2px;
-    outline-color: rgb(55, 46, 136);
+    outline-width: 1px;
+    outline-color: rgb(120 117 142);
 }
 
 .ship-div-elements {
@@ -206,9 +231,9 @@ body {
     align-items: center;
     justify-content: center;
     outline: solid;
-    outline-width: 1px;
-    outline-color:rgb(131, 126, 126);;
-    background-color: rgb(80, 78, 77);
+    outline-width: 2px;
+    outline-color:rgb(136 174 202);
+    background-color: rgb(94 112 125);
     /* width: var(--big-square);
     height: var(--big-square); */
     width: calc(var(--big-square) - 4px);
@@ -348,7 +373,7 @@ body {
     justify-content: center;
     width: 100%;
     color: white;
-    font-size: 100px;
+    font-size: 60px;
     text-shadow: 2px 3px black;
     border-radius: 5px;
     color: white;
@@ -356,7 +381,7 @@ body {
 
 #play-again:hover {
     cursor: pointer;
-    font-size: 120px;
+    font-size: 80px;
 }
 
 .rise {

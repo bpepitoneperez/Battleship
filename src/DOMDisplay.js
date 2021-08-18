@@ -15,11 +15,16 @@ body.appendChild(resultsDiv);
 let activeShip;
 let activeShipDiv;
 
+let loadFirst = document.createElement('span');
+loadFirst.setAttribute('class', 'material-icons-outlined');
+loadFirst.textContent = 'radio_button_checked';
+
 function createLayout () {
     createTopArea();
     createSetupScreen();
     createShipSetup();
     createSetupBoard();
+    gameOver();
 }
 
 function createTopArea () {
@@ -29,6 +34,9 @@ function createTopArea () {
     const headerDiv = document.createElement('div');
     headerDiv.id = 'header-div';
     headerDiv.textContent = 'BATTLESHIP';
+    headerDiv.addEventListener('click', () => {
+        resetShipSetup();
+    })
 
     const updateDiv = document.createElement('div');
     updateDiv.id = 'update-area';
@@ -422,6 +430,9 @@ function createShipSetup () {
 }
 
 function resetShipSetup() {
+    let updateDiv = document.getElementById('update-area');
+    updateDiv.textContent = 'Deploy Your Ships!';
+    updateDiv.setAttribute('class', '');
     const content = document.querySelector('#content');
     while (content.firstChild) {
         content.removeChild(content.firstChild);
@@ -650,10 +661,12 @@ function changeShipPartsSize() {
     if (!player1Turn) {
         cpuAttack();
         updateArea.textContent = 'Enemy Turn';
+        updateArea.setAttribute('class', '');
     }
     else {
         canAttack = true;
         updateArea.textContent = 'Your Turn';
+        updateArea.setAttribute('class', 'your-turn');
     }
 }
 
