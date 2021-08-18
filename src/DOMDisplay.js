@@ -24,7 +24,8 @@ function createLayout () {
     createSetupScreen();
     createShipSetup();
     createSetupBoard();
-    gameOver();
+    //Test layout of game over screen
+    //gameOver();
 }
 
 function createTopArea () {
